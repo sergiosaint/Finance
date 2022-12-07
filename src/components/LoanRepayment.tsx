@@ -1,13 +1,11 @@
 import React from 'react';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
 
 interface ILoanRepaymentProps {
   mixesForWave: number
 }
 
-function RoundToTwoDecimalPlaces(val : number){
-  return Math.round((val + Number.EPSILON) * 100) / 100
+function RoundToTwoDecimalPlaces(num : number) : number{
+  return Number(Math.round(Number(num + "e+2")) + "e-2");
 }
 
 function calculateRepaymentValue(stringDebt:string, stringYearInterest:string, stringNumberOfPayments:string) : number {
@@ -39,31 +37,50 @@ function getResultRows(
   const repaymentValue = parseFloat(stringRepaymentValue);
   const repaymentTax = parseFloat(stringRepaymentTax);
 
+  let interestSoFar = 0;
+  let taxesSoFar = 0;
+
   const result : JSX.Element[] = [];
   for (let i = 0; i < numberOfPayments; i++) {
     let payment = RoundToTwoDecimalPlaces(calculateRepaymentValue2(debt, montlyInterest, numberOfPayments - i))
     let interest = RoundToTwoDecimalPlaces(debt*montlyInterest)
     let repayment = RoundToTwoDecimalPlaces(payment-interest)
 
+    if(repayment > debt){
+      repayment = debt;
+      payment = repayment + interest;
+    }
+
     let actualRepaymentValue = 0;
     let actualRepaymentTax = 0
-    if(i >= startMonth && (i == startMonth || (i - startMonth) % repaymentEveryXMonths == 0)){
-      actualRepaymentValue = RoundToTwoDecimalPlaces(repaymentValue / (1+repaymentTax/100)) // prone to error, devo receber o valor a amortizar...
-      actualRepaymentTax = RoundToTwoDecimalPlaces(actualRepaymentValue*repaymentTax/100)
+
+    if(debt-repayment > 0) {
+      if(i >= startMonth && (i == startMonth || (i - startMonth) % repaymentEveryXMonths == 0)){
+        actualRepaymentValue  = RoundToTwoDecimalPlaces(repaymentValue / (1+repaymentTax/100)) // prone to error, devo receber o valor a amortizar...
+        actualRepaymentValue = RoundToTwoDecimalPlaces(Math.min(actualRepaymentValue, debt - repayment))
+        actualRepaymentTax = RoundToTwoDecimalPlaces(actualRepaymentValue*repaymentTax/100)
+      }
     }
 
     result.push(
-    <tr>
+    <tr key={`"${i}"`}>
     <th>{i+1}</th>
     <th>{debt}</th>
-    <th>{payment}{actualRepaymentValue+actualRepaymentTax > 0 && `+(${actualRepaymentValue+actualRepaymentTax})`}</th>
+    <th>{payment}{actualRepaymentValue > 0 && `+(${RoundToTwoDecimalPlaces(actualRepaymentValue+actualRepaymentTax)})`}</th>
     <th>{interest}</th>
     <th>{repayment}</th>
     <th>{actualRepaymentValue}</th>
     <th>{actualRepaymentTax}</th>
     </tr>);
 
-    debt = RoundToTwoDecimalPlaces(debt - repayment - actualRepaymentValue);
+    debt = RoundToTwoDecimalPlaces(RoundToTwoDecimalPlaces(debt - repayment) - actualRepaymentValue); //Hack for proper math...
+
+    interestSoFar += interest
+    taxesSoFar += actualRepaymentTax
+
+    if (debt == 0){
+      break
+    }
   }
 
   return result;
