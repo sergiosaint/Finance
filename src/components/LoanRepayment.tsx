@@ -46,7 +46,7 @@ function getResults(
                 <th>{installment.interest}</th>
                 <th>{RoundToTwoDecimalPlaces(installment.monthlyPayment-installment.interest)}</th>
                 <th>{installment.extraRepaymentValue}</th>
-                <th>{installment.extraRepaymentValue}</th>
+                <th>{installment.extraRepaymentTax}</th>
               </tr>)}
             </tbody>
           </table>)
@@ -63,7 +63,6 @@ function LoanRepayment(props: ILoanRepaymentProps) {
   
 
   const onAmountChange = (e:any, set: any) => {
-    debugger
     const amount = e.target.value;
 
     if (!amount || amount.match(/^\d{1,}(\.\d{0,4})?$/)) {
