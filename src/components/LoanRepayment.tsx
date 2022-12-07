@@ -8,13 +8,13 @@ function RoundToTwoDecimalPlaces(num : number) : number{
   return Number(Math.round(Number(num + "e+2")) + "e-2");
 }
 
-function calculateRepaymentValue(stringDebt:string, stringYearInterest:string, stringNumberOfPayments:string) : number {
-  const debt = parseFloat(stringDebt);
-  const montlyInterest = parseFloat(stringYearInterest)/100/12;
-  const numberOfPayments = parseFloat(stringNumberOfPayments);
+// function calculateRepaymentValue(stringDebt:string, stringYearInterest:string, stringNumberOfPayments:string) : number {
+//   const debt = parseFloat(stringDebt);
+//   const montlyInterest = parseFloat(stringYearInterest)/100/12;
+//   const numberOfPayments = parseFloat(stringNumberOfPayments);
 
-  return (debt / ((1-Math.pow(1+(montlyInterest), -numberOfPayments))/montlyInterest)) - debt* montlyInterest;
-}
+//   return (debt / ((1-Math.pow(1+(montlyInterest), -numberOfPayments))/montlyInterest)) - debt* montlyInterest;
+// }
 
 function calculateRepaymentValue2(debt:number, montlyInterest:number, numberOfPayments:number) : number {
   return (debt / ((1-Math.pow(1+(montlyInterest), -numberOfPayments))/montlyInterest));
@@ -37,8 +37,8 @@ function getResultRows(
   const repaymentValue = parseFloat(stringRepaymentValue);
   const repaymentTax = parseFloat(stringRepaymentTax);
 
-  let interestSoFar = 0;
-  let taxesSoFar = 0;
+  //let interestSoFar = 0;
+  //let taxesSoFar = 0;
 
   const result : JSX.Element[] = [];
   for (let i = 0; i < numberOfPayments; i++) {
@@ -55,7 +55,7 @@ function getResultRows(
     let actualRepaymentTax = 0
 
     if(debt-repayment > 0) {
-      if(i >= startMonth && (i == startMonth || (i - startMonth) % repaymentEveryXMonths == 0)){
+      if(i >= startMonth && (i === startMonth || (i - startMonth) % repaymentEveryXMonths === 0)){
         actualRepaymentValue  = RoundToTwoDecimalPlaces(repaymentValue / (1+repaymentTax/100)) // prone to error, devo receber o valor a amortizar...
         actualRepaymentValue = RoundToTwoDecimalPlaces(Math.min(actualRepaymentValue, debt - repayment))
         actualRepaymentTax = RoundToTwoDecimalPlaces(actualRepaymentValue*repaymentTax/100)
@@ -75,10 +75,10 @@ function getResultRows(
 
     debt = RoundToTwoDecimalPlaces(RoundToTwoDecimalPlaces(debt - repayment) - actualRepaymentValue); //Hack for proper math...
 
-    interestSoFar += interest
-    taxesSoFar += actualRepaymentTax
+    //interestSoFar += interest
+    //taxesSoFar += actualRepaymentTax
 
-    if (debt == 0){
+    if (debt === 0){
       break
     }
   }
@@ -169,33 +169,8 @@ function LoanRepayment(props: ILoanRepaymentProps) {
                    onChange={e => setStartMonth(e.target.value)}
             />
           </div>
-       
-          <button type='submit' className='btn btn-primary'>Calcular</button>
-        </form>
 
-        <table className="table table-striped table h6-sm mb-0">
-          <tbody>
-            <tr>
-	            <th></th>
-	            <th>Valores Antigos</th>
-	            <th>Novos Valores</th>
-	          </tr>
-	          <tr>
-	            <td>Juros</td>
-	            <td>€ {parseFloat(debt)*(parseFloat(interest)/100/12)}</td>
-	            <td>€ {(parseFloat(debt)-(parseFloat(repaymentValue)*(1-parseFloat(repaymentTax)/100)))*(parseFloat(interest)/100)}</td>
-	          </tr>
-	          <tr>
-	            <td>Capital</td>
-	            <td>€ {calculateRepaymentValue(debt, interest, numberOfPayments)}</td>
-	            <td>€ 109,85</td>
-	          </tr>
-	          <tr className="highlight">
-	            <td>Prestação (Capital + Juros)</td>
-	            <td>€ 308,50</td><td>€ 299,69 (<span>-2,857%</span>)</td>
-	          </tr>
-          </tbody>
-        </table>
+        </form>
 
         Resultados
         <table className="table table-striped table h6-sm mb-0">
