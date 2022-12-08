@@ -2,6 +2,7 @@ interface ILoanRepaymentInstalment {
   installmentNumber: number
   currentDebt: number
   monthlyPayment: number
+  interest: number
   extraRepaymentValue: number
   extraRepaymentTax: number
 }
@@ -75,6 +76,7 @@ function calculateInstallments (
         installmentNumber: i,
         currentDebt: debt,
         monthlyPayment: payment,
+        interest: interest,
         extraRepaymentValue: actualRepaymentValue,
         extraRepaymentTax: actualRepaymentTax
       });

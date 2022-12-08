@@ -1,4 +1,5 @@
 import React from 'react';
+import calculateInstallments from './LoanRepaymentCalculator';
 
 interface ILoanRepaymentProps {
   mixesForWave: number
@@ -8,82 +9,47 @@ function RoundToTwoDecimalPlaces(num : number) : number{
   return Number(Math.round(Number(num + "e+2")) + "e-2");
 }
 
-// function calculateRepaymentValue(stringDebt:string, stringYearInterest:string, stringNumberOfPayments:string) : number {
-//   const debt = parseFloat(stringDebt);
-//   const montlyInterest = parseFloat(stringYearInterest)/100/12;
-//   const numberOfPayments = parseFloat(stringNumberOfPayments);
-
-//   return (debt / ((1-Math.pow(1+(montlyInterest), -numberOfPayments))/montlyInterest)) - debt* montlyInterest;
-// }
-
-function calculateRepaymentValue2(debt:number, montlyInterest:number, numberOfPayments:number) : number {
-  return (debt / ((1-Math.pow(1+(montlyInterest), -numberOfPayments))/montlyInterest));
-}
-
-function getResultRows(
+function getResults(
   stringDebt :string,
   stringYearInterest :string,
   stringNumberOfPayments :string,
   stringStartMonth : string,
   stringRepaymentEveryXMonths : string,
   stringRepaymentValue : string,
-  stringRepaymentTax : string) : JSX.Element[]
+  stringRepaymentTax : string) : JSX.Element
   {
   let debt = parseFloat(stringDebt);
-  const montlyInterest = parseFloat(stringYearInterest)/100/12;
+  const anualInterest = parseFloat(stringYearInterest);
   const numberOfPayments = parseFloat(stringNumberOfPayments);
   const startMonth = parseFloat(stringStartMonth);
   const repaymentEveryXMonths = parseFloat(stringRepaymentEveryXMonths);
   const repaymentValue = parseFloat(stringRepaymentValue);
   const repaymentTax = parseFloat(stringRepaymentTax);
 
-  //let interestSoFar = 0;
-  //let taxesSoFar = 0;
-
-  const result : JSX.Element[] = [];
-  for (let i = 0; i < numberOfPayments; i++) {
-    let payment = RoundToTwoDecimalPlaces(calculateRepaymentValue2(debt, montlyInterest, numberOfPayments - i))
-    let interest = RoundToTwoDecimalPlaces(debt*montlyInterest)
-    let repayment = RoundToTwoDecimalPlaces(payment-interest)
-
-    if(repayment > debt){
-      repayment = debt;
-      payment = repayment + interest;
-    }
-
-    let actualRepaymentValue = 0;
-    let actualRepaymentTax = 0
-
-    if(debt-repayment > 0) {
-      if(i >= startMonth && (i === startMonth || (i - startMonth) % repaymentEveryXMonths === 0)){
-        actualRepaymentValue  = RoundToTwoDecimalPlaces(repaymentValue / (1+repaymentTax/100)) // prone to error, devo receber o valor a amortizar...
-        actualRepaymentValue = RoundToTwoDecimalPlaces(Math.min(actualRepaymentValue, debt - repayment))
-        actualRepaymentTax = RoundToTwoDecimalPlaces(actualRepaymentValue*repaymentTax/100)
-      }
-    }
-
-    result.push(
-    <tr key={`"${i}"`}>
-    <th>{i+1}</th>
-    <th>{debt}</th>
-    <th>{payment}{actualRepaymentValue > 0 && `+(${RoundToTwoDecimalPlaces(actualRepaymentValue+actualRepaymentTax)})`}</th>
-    <th>{interest}</th>
-    <th>{repayment}</th>
-    <th>{actualRepaymentValue}</th>
-    <th>{actualRepaymentTax}</th>
-    </tr>);
-
-    debt = RoundToTwoDecimalPlaces(RoundToTwoDecimalPlaces(debt - repayment) - actualRepaymentValue); //Hack for proper math...
-
-    //interestSoFar += interest
-    //taxesSoFar += actualRepaymentTax
-
-    if (debt === 0){
-      break
-    }
-  }
-
-  return result;
+  return (<table className="table table-striped table h6-sm mb-0">
+            <tbody>
+              <tr>
+                <th>#</th>
+                <th>Divida</th>
+	              <th>Pagamento</th>
+                <th>Juro</th>
+                <th>Amortizado</th>
+                <th>Amortizado Extra</th>
+                <th>Taxa de amortizacao Extra</th>
+              </tr>
+              {calculateInstallments(debt, anualInterest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, false)
+              .installments.map(installment =>
+              <tr key={`"${installment.installmentNumber}"`}>
+                <th>{installment.installmentNumber+1}</th>
+                <th>{installment.currentDebt}</th>
+                <th>{installment.monthlyPayment}{installment.extraRepaymentValue > 0 && `+(${RoundToTwoDecimalPlaces(installment.extraRepaymentValue+installment.extraRepaymentTax)})`}</th>
+                <th>{installment.interest}</th>
+                <th>{RoundToTwoDecimalPlaces(installment.monthlyPayment-installment.interest)}</th>
+                <th>{installment.extraRepaymentValue}</th>
+                <th>{installment.extraRepaymentValue}</th>
+              </tr>)}
+            </tbody>
+          </table>)
 }
 
 function LoanRepayment(props: ILoanRepaymentProps) {
@@ -100,9 +66,9 @@ function LoanRepayment(props: ILoanRepaymentProps) {
     debugger
     const amount = e.target.value;
 
-    //if (!amount || amount.match(/^\d{1,}(\.\d{0,4})?$/)) {
+    if (!amount || amount.match(/^\d{1,}(\.\d{0,4})?$/)) {
       set(amount);
-    //}
+    }
   };
 
   return (
@@ -173,20 +139,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
         </form>
 
         Resultados
-        <table className="table table-striped table h6-sm mb-0">
-          <tbody>
-            <tr>
-	            <th>#</th>
-	            <th>Divida</th>
-	            <th>Pagamento</th>
-              <th>Juro</th>
-              <th>Amortizado</th>
-              <th>Amortizado Extra</th>
-              <th>Taxa de amortizacao Extra</th>
-	          </tr>
-            {getResultRows(debt, interest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax)}
-          </tbody>
-        </table>
+        {getResults(debt, interest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax)}
       </>
   )
 }
