@@ -1,5 +1,6 @@
 import React from 'react';
 import calculateInstallments from './LoanRepaymentCalculator';
+import '../LoanRepayment.css'
 
 interface ILoanRepaymentProps {
   mixesForWave: number
@@ -14,7 +15,7 @@ function savedTimeText(months: number) : string {
   const savedMonths = months % 12;
 
   if(months === 0){
-    return "Prazo de pagamento mantevese igual"
+    return "Prazo de pagamento mantém-se igual"
   }
 
   let result = "Pagamento antecipado em ";
@@ -56,13 +57,12 @@ function getResults(
   const savedMonths = beforeInstallments.installments.length-afterInstallments.installments.length
 
   return (
-    <>
+    <div className='results'>
       <div>
-      Total antes: {beforeInstallments.totalInterest}
-      Total depois: {`${RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes)} (${afterInstallments.totalInterest} + ${afterInstallments.totalTaxes})`}
-      poupanca: {RoundToTwoDecimalPlaces(beforeInstallments.totalInterest - RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes))}
-      {savedTimeText(savedMonths)})
-      {}
+        Total em juros antes: {beforeInstallments.totalInterest}€<br/>
+        Total em juros e taxas depois: {`${RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes)}€ (${afterInstallments.totalInterest} + ${afterInstallments.totalTaxes})`}<br/>
+        poupanca: {RoundToTwoDecimalPlaces(beforeInstallments.totalInterest - RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes))}€<br/>
+        {savedTimeText(savedMonths)}<br/>
       </div>
       <table className="table table-striped table h6-sm mb-0">
         <tbody>
@@ -88,7 +88,7 @@ function getResults(
           </tr>)}
         </tbody>
       </table>
-    </>)
+    </div>)
 }
 
 function LoanRepayment(props: ILoanRepaymentProps) {
@@ -114,69 +114,69 @@ function LoanRepayment(props: ILoanRepaymentProps) {
       <>
         <h2>Calculo de amortização antecipada</h2>
 
-        <form className='demoForm'>
-          <div className='form-group'>
+        <div className='input'>
+          <form className='demoForm'>
+            <div className='form-group'>
 
-            <label htmlFor='debt'>Valor em dívida</label>
-            <input type='text'
-                   className='form-control'
-                   name='debt'
-                   value={debt}
-                   onChange={e => onAmountChange(e, setDebt)}
-            />
+              <label htmlFor='debt'>Valor em dívida</label>
+              <input type='text'
+                     className='form-control'
+                     name='debt'
+                     value={debt}
+                    onChange={e => onAmountChange(e, setDebt)}
+              />
 
-            <label htmlFor='interest'>Taxa de juro</label>
-            <input type='text'
-                   className='form-control'
-                   name='interest'
-                   value={interest}
-                   onChange={e => setInterest(e.target.value)}
-            />
+             <label htmlFor='interest'>Taxa de juro anual</label>
+              <input type='text'
+                     className='form-control'
+                     name='interest'
+                     value={interest}
+                     onChange={e => setInterest(e.target.value)}
+             />
 
-            <label htmlFor='numberOfPayments'>Prestações mensais em falta</label>
-            <input type='text'
-                   className='form-control'
-                   name='numberOfPayments'
-                   value={numberOfPayments}
-                   onChange={e => setNumberOfPayments(e.target.value)}
-            />
+              <label htmlFor='numberOfPayments'>Prestações mensais em falta</label>
+              <input type='text'
+                     className='form-control'
+                     name='numberOfPayments'
+                     value={numberOfPayments}
+                     onChange={e => setNumberOfPayments(e.target.value)}
+              />
 
-            <label htmlFor='repaymentValue'>Valor a despender</label>
-            <input type='text'
-                   className='form-control'
-                   name='repaymentValue'
-                   value={repaymentValue}
-                   onChange={e => setRepaymentValue(e.target.value)}
-            />
+              <label htmlFor='repaymentValue'>Valor a despender</label>
+              <input type='text'
+                     className='form-control'
+                     name='repaymentValue'
+                     value={repaymentValue}
+                     onChange={e => setRepaymentValue(e.target.value)}
+              />
 
-            <label htmlFor='repaymentTax'>Taxa de amortização</label>
-            <input type='text'
-                   className='form-control'
-                   name='repaymentTax'
-                   value={repaymentTax}
-                   onChange={e => setRepaymentTax(e.target.value)}
-            />
+              <label htmlFor='repaymentTax'>Taxa de amortização</label>
+              <input type='text'
+                    className='form-control'
+                    name='repaymentTax'
+                    value={repaymentTax}
+                    onChange={e => setRepaymentTax(e.target.value)}
+              />
 
-            <label htmlFor='repaymentEveryXMonths'>Pagamentos de x em x meses</label>
-            <input type='text'
-                   className='form-control'
-                   name='repaymentEveryXMonths'
-                   value={repaymentEveryXMonths}
-                   onChange={e => setRepaymentEveryXMonths(e.target.value)}
-            />
+              <label htmlFor='repaymentEveryXMonths'>Pagamentos de x em x meses</label>
+              <input type='text'
+                    className='form-control'
+                    name='repaymentEveryXMonths'
+                    value={repaymentEveryXMonths}
+                    onChange={e => setRepaymentEveryXMonths(e.target.value)}
+              />
 
-            <label htmlFor='startMonth'>Começar em x meses</label>
-            <input type='text'
-                   className='form-control'
-                   name='startMonth'
-                   value={startMonth}
-                   onChange={e => setStartMonth(e.target.value)}
-            />
-          </div>
+              <label htmlFor='startMonth'>Começar em x meses</label>
+              <input type='text'
+                     className='form-control'
+                     name='startMonth'
+                     value={startMonth}
+                     onChange={e => setStartMonth(e.target.value)}
+              />
+            </div>
+          </form>
+        </div>
 
-        </form>
-
-        Resultados
         {getResults(debt, interest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax)}
       </>
   )

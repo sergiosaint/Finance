@@ -1,0 +1,17 @@
+.input {
+  float: left;
+  background-color: aliceblue;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px;
+}
+
+.results {
+  float: left;
+  background-color: aliceblue;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px;
+}
+
+
