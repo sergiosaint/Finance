@@ -83,8 +83,8 @@ function calculateInstallments (
 
     debt = RoundToTwoDecimalPlaces(RoundToTwoDecimalPlaces(debt - repayment) - actualRepaymentValue); //Hack for proper math...
 
-    totalInterest += interest
-    totalTaxes += actualRepaymentTax
+    totalInterest = RoundToTwoDecimalPlaces(totalInterest + interest)
+    totalTaxes = RoundToTwoDecimalPlaces(totalTaxes + actualRepaymentTax)
 
     if (debt === 0){
       break

@@ -1,5 +1,14 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/1e239477-3dec-435b-96f6-17fa7781175d/deploy-status)](https://app.netlify.com/sites/amortizacoes/deploys) live demo in [amortizacoes.netlify.app/](https://amortizacoes.netlify.app/)
 
+The main algorithm of this app is a function which calculates the constant payments for a loan based on a constant interest rate. (A similar one exists in Excel called PMT)
+
+V - Value to repay  
+R - Monthly repayment value  
+r - Monthly interest  
+n - Total number of payments for the loan  
+
+$$R = V (\frac{1-(1+r)^{-n}}{r}) = \frac{V}{r} (1-(1+r)^{-n})$$
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

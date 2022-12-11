@@ -9,6 +9,30 @@ function RoundToTwoDecimalPlaces(num : number) : number{
   return Number(Math.round(Number(num + "e+2")) + "e-2");
 }
 
+function savedTimeText(months: number) : string {
+  const savedYears = Math.floor(months/12);
+  const savedMonths = months % 12;
+
+  if(months === 0){
+    return "Prazo de pagamento mantevese igual"
+  }
+
+  let result = "Pagamento antecipado em ";
+  if(savedYears > 0){
+    result += `${savedYears} ${savedYears > 1 ? 'anos' : 'ano'}` 
+  }
+
+  if(savedYears > 0 && savedMonths > 0){
+    result += ` e ` 
+  }
+
+  if(savedMonths > 0){
+    result += `${savedMonths} ${savedMonths > 1 ? 'meses' : 'mes'}` 
+  }
+
+  return result;
+}
+
 function getResults(
   stringDebt :string,
   stringYearInterest :string,
@@ -26,30 +50,45 @@ function getResults(
   const repaymentValue = parseFloat(stringRepaymentValue);
   const repaymentTax = parseFloat(stringRepaymentTax);
 
-  return (<table className="table table-striped table h6-sm mb-0">
-            <tbody>
-              <tr>
-                <th>#</th>
-                <th>Divida</th>
-	              <th>Pagamento</th>
-                <th>Juro</th>
-                <th>Amortizado</th>
-                <th>Amortizado Extra</th>
-                <th>Taxa de amortizacao Extra</th>
-              </tr>
-              {calculateInstallments(debt, anualInterest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, false)
-              .installments.map(installment =>
-              <tr key={`"${installment.installmentNumber}"`}>
-                <th>{installment.installmentNumber+1}</th>
-                <th>{installment.currentDebt}</th>
-                <th>{installment.monthlyPayment}{installment.extraRepaymentValue > 0 && `+(${RoundToTwoDecimalPlaces(installment.extraRepaymentValue+installment.extraRepaymentTax)})`}</th>
-                <th>{installment.interest}</th>
-                <th>{RoundToTwoDecimalPlaces(installment.monthlyPayment-installment.interest)}</th>
-                <th>{installment.extraRepaymentValue}</th>
-                <th>{installment.extraRepaymentTax}</th>
-              </tr>)}
-            </tbody>
-          </table>)
+  let afterInstallments = calculateInstallments(debt, anualInterest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, false)
+  let beforeInstallments = calculateInstallments(debt, anualInterest, numberOfPayments, 0, 0, 0, 0, false)
+
+  const savedMonths = beforeInstallments.installments.length-afterInstallments.installments.length
+
+  return (
+    <>
+      <div>
+      Total antes: {beforeInstallments.totalInterest}
+      Total depois: {`${RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes)} (${afterInstallments.totalInterest} + ${afterInstallments.totalTaxes})`}
+      poupanca: {RoundToTwoDecimalPlaces(beforeInstallments.totalInterest - RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes))}
+      {savedTimeText(savedMonths)})
+      {}
+      </div>
+      <table className="table table-striped table h6-sm mb-0">
+        <tbody>
+          <tr>
+            <th>#</th>
+            <th>Divida</th>
+	          <th>Pagamento</th>
+            <th>Juro</th>
+            <th>Amortizado</th>
+            <th>Amortizado Extra</th>
+            <th>Taxa de amortizacao Extra</th>
+          </tr>
+          {calculateInstallments(debt, anualInterest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, false)
+          .installments.map(installment =>
+          <tr key={`"${installment.installmentNumber}"`}>
+            <th>{installment.installmentNumber+1}</th>
+            <th>{installment.currentDebt}</th>
+            <th>{installment.monthlyPayment}{installment.extraRepaymentValue > 0 && `+(${RoundToTwoDecimalPlaces(installment.extraRepaymentValue+installment.extraRepaymentTax)})`}</th>
+            <th>{installment.interest}</th>
+            <th>{RoundToTwoDecimalPlaces(installment.monthlyPayment-installment.interest)}</th>
+            <th>{installment.extraRepaymentValue}</th>
+            <th>{installment.extraRepaymentTax}</th>
+          </tr>)}
+        </tbody>
+      </table>
+    </>)
 }
 
 function LoanRepayment(props: ILoanRepaymentProps) {
