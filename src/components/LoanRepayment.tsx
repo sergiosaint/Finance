@@ -78,13 +78,13 @@ function getResults(
           {calculateInstallments(debt, anualInterest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, false)
           .installments.map(installment =>
           <tr key={`"${installment.installmentNumber}"`}>
-            <th>{installment.installmentNumber+1}</th>
-            <th>{installment.currentDebt}</th>
-            <th>{installment.monthlyPayment}{installment.extraRepaymentValue > 0 && `+(${RoundToTwoDecimalPlaces(installment.extraRepaymentValue+installment.extraRepaymentTax)})`}</th>
-            <th>{installment.interest}</th>
-            <th>{RoundToTwoDecimalPlaces(installment.monthlyPayment-installment.interest)}</th>
-            <th>{installment.extraRepaymentValue}</th>
-            <th>{installment.extraRepaymentTax}</th>
+            <td>{installment.installmentNumber+1}</td>
+            <td>{installment.currentDebt}</td>
+            <td>{installment.monthlyPayment}{installment.extraRepaymentValue > 0 && `+(${RoundToTwoDecimalPlaces(installment.extraRepaymentValue+installment.extraRepaymentTax)})`}</td>
+            <td>{installment.interest}</td>
+            <td>{RoundToTwoDecimalPlaces(installment.monthlyPayment-installment.interest)}</td>
+            <td>{installment.extraRepaymentValue}</td>
+            <td>{installment.extraRepaymentTax}</td>
           </tr>)}
         </tbody>
       </table>

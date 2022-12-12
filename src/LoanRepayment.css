@@ -14,4 +14,9 @@
   margin: 20px;
 }
 
+.results th {
+  position: sticky;
+  top: 0;
+  background-color: rgb(205, 207, 211) !important;
+}
 
