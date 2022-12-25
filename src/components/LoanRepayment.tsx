@@ -58,11 +58,12 @@ function getResults(
 
   return (
     <div className='results'>
-      <div>
-        Total em juros antes: {beforeInstallments.totalInterest}€<br/>
-        Total em juros e taxas depois: {`${RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes)}€ (${afterInstallments.totalInterest} + ${afterInstallments.totalTaxes})`}<br/>
+      <div className='text'>
+        Total em juros{repaymentValue !== 0 && <> antes</>}: {beforeInstallments.totalInterest}€<br/>
+        {repaymentValue !== 0 &&
+        <>Total em juros e taxas depois: {`${RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes)}€ (${afterInstallments.totalInterest} + ${afterInstallments.totalTaxes})`}<br/>
         poupanca: {RoundToTwoDecimalPlaces(beforeInstallments.totalInterest - RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes))}€<br/>
-        {savedTimeText(savedMonths)}<br/>
+        {savedTimeText(savedMonths)}<br/></>}
       </div>
       <table className="table table-striped table h6-sm mb-0">
         <tbody>
@@ -73,7 +74,7 @@ function getResults(
             <th>Juro</th>
             <th>Amortizado</th>
             <th>Amortizado Extra</th>
-            <th>Taxa de amortizacao Extra</th>
+            <th>Taxa de amortização Extra</th>
           </tr>
           {calculateInstallments(debt, anualInterest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, false)
           .installments.map(installment =>
@@ -112,7 +113,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
   return (
 
       <>
-        <h2>Calculo de amortização antecipada</h2>
+        <h2 className='title'>Calculo de amortização antecipada</h2>
 
         <div className='input'>
           <form className='demoForm'>

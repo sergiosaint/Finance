@@ -1,3 +1,8 @@
+.title {
+  margin-top: 10px;
+  text-align: center;
+}
+
 .input {
   float: left;
   background-color: aliceblue;
@@ -18,5 +23,9 @@
   position: sticky;
   top: 0;
   background-color: rgb(205, 207, 211) !important;
+}
+
+.results .text {
+  margin-bottom: 20px;
 }
 
