@@ -9,6 +9,9 @@ n - Total number of payments for the loan
 
 $$R = V (\frac{1-(1+r)^{-n}}{r}) = \frac{V}{r} (1-(1+r)^{-n})$$
 
+# Credits
+Uses the 'Dollar stats' icon taken from https://iconarchive.com/
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
