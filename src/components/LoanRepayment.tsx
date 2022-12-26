@@ -41,7 +41,8 @@ function getResults(
   stringStartMonth : string,
   stringRepaymentEveryXMonths : string,
   stringRepaymentValue : string,
-  stringRepaymentTax : string) : JSX.Element
+  stringRepaymentTax : string,
+  useSavings: boolean) : JSX.Element
   {
   let debt = parseFloat(stringDebt);
   const anualInterest = parseFloat(stringYearInterest);
@@ -51,7 +52,7 @@ function getResults(
   const repaymentValue = parseFloat(stringRepaymentValue);
   const repaymentTax = parseFloat(stringRepaymentTax);
 
-  let afterInstallments = calculateInstallments(debt, anualInterest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, false)
+  let afterInstallments = calculateInstallments(debt, anualInterest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, useSavings)
   let beforeInstallments = calculateInstallments(debt, anualInterest, numberOfPayments, 0, 0, 0, 0, false)
 
   const savedMonths = beforeInstallments.installments.length-afterInstallments.installments.length
@@ -76,8 +77,7 @@ function getResults(
             <th>Amortizado Extra</th>
             <th>Taxa de amortização Extra</th>
           </tr>
-          {calculateInstallments(debt, anualInterest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, false)
-          .installments.map(installment =>
+          {afterInstallments.installments.map(installment =>
           <tr key={`"${installment.installmentNumber}"`}>
             <td>{installment.installmentNumber+1}</td>
             <td>{installment.currentDebt}</td>
@@ -100,6 +100,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
   const [numberOfPayments, setNumberOfPayments] = React.useState("");
   const [repaymentEveryXMonths, setRepaymentEveryXMonths] = React.useState("0");
   const [startMonth, setStartMonth] = React.useState("0");
+  const [useSavings, setUseSavings] = React.useState(false);
   
 
   const onAmountChange = (e:any, set: any) => {
@@ -108,6 +109,10 @@ function LoanRepayment(props: ILoanRepaymentProps) {
     if (!amount || amount.match(/^\d{1,}(\.\d{0,4})?$/)) {
       set(amount);
     }
+  };
+
+  const handleChangeUseSavings = () => {
+    setUseSavings(!useSavings);
   };
 
   return (
@@ -174,11 +179,18 @@ function LoanRepayment(props: ILoanRepaymentProps) {
                      value={startMonth}
                      onChange={e => setStartMonth(e.target.value)}
               />
+
+              <label htmlFor='useSavings'>Usar poupanças</label>
+              <input type="checkbox"
+                     name='useSavings'
+                     checked={useSavings}
+                     onChange={handleChangeUseSavings}
+              />
             </div>
           </form>
         </div>
 
-        {getResults(debt, interest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax)}
+        {getResults(debt, interest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, useSavings)}
       </>
   )
 }

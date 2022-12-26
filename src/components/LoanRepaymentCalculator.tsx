@@ -46,7 +46,7 @@ function calculateInstallments (
     let interest = RoundToTwoDecimalPlaces(debt*montlyInterest);
     let repayment = RoundToTwoDecimalPlaces(payment-interest);
 
-    savings += RoundToTwoDecimalPlaces(payment-originalMonthlyPayment);
+    savings += RoundToTwoDecimalPlaces(originalMonthlyPayment-payment);
 
     if(repayment > debt){
       repayment = debt;
