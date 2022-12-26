@@ -56,7 +56,7 @@ function calculateInstallments (
     let actualRepaymentValue = 0;
     let actualRepaymentTax = 0;
 
-    if(debt-repayment > 0) {
+    if(RoundToTwoDecimalPlaces(debt-repayment) > 0) {
       if(i >= startMonth && (i === startMonth || (i - startMonth) % repaymentEveryXMonths === 0)){
         if(useSavings){
           actualRepaymentValue = RoundToTwoDecimalPlaces(repaymentValue + savings);
