@@ -111,6 +111,14 @@ function LoanRepayment(props: ILoanRepaymentProps) {
     }
   };
 
+  const onIntegerAmountChange = (e:any, set: any) => {
+    const amount = e.target.value;
+
+    if (!amount || amount.match(/^\d{0,3}$/)) {
+      set(amount);
+    }
+  };
+
   const handleChangeUseSavings = () => {
     setUseSavings(!useSavings);
   };
@@ -137,7 +145,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
                      className='form-control'
                      name='interest'
                      value={interest}
-                     onChange={e => setInterest(e.target.value)}
+                     onChange={e => onAmountChange(e, setInterest)}
              />
 
               <label htmlFor='numberOfPayments'>Prestações mensais em falta</label>
@@ -145,7 +153,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
                      className='form-control'
                      name='numberOfPayments'
                      value={numberOfPayments}
-                     onChange={e => setNumberOfPayments(e.target.value)}
+                     onChange={e => onIntegerAmountChange(e, setNumberOfPayments)}
               />
 
               <label htmlFor='repaymentValue'>Valor a despender</label>
@@ -153,7 +161,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
                      className='form-control'
                      name='repaymentValue'
                      value={repaymentValue}
-                     onChange={e => setRepaymentValue(e.target.value)}
+                     onChange={e => onAmountChange(e, setRepaymentValue)}
               />
 
               <label htmlFor='repaymentTax'>Taxa de amortização</label>
@@ -161,7 +169,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
                     className='form-control'
                     name='repaymentTax'
                     value={repaymentTax}
-                    onChange={e => setRepaymentTax(e.target.value)}
+                    onChange={e => onAmountChange(e, setRepaymentTax)}
               />
 
               <label htmlFor='repaymentEveryXMonths'>Pagamentos de x em x meses</label>
@@ -169,7 +177,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
                     className='form-control'
                     name='repaymentEveryXMonths'
                     value={repaymentEveryXMonths}
-                    onChange={e => setRepaymentEveryXMonths(e.target.value)}
+                    onChange={e => onIntegerAmountChange(e, setRepaymentEveryXMonths)}
               />
 
               <label htmlFor='startMonth'>Começar em x meses</label>
@@ -177,7 +185,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
                      className='form-control'
                      name='startMonth'
                      value={startMonth}
-                     onChange={e => setStartMonth(e.target.value)}
+                     onChange={e => onIntegerAmountChange(e, setStartMonth)}
               />
 
               <label htmlFor='useSavings'>Usar poupanças</label>
