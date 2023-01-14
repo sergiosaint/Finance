@@ -1,5 +1,8 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/1e239477-3dec-435b-96f6-17fa7781175d/deploy-status)](https://app.netlify.com/sites/amortizacoes/deploys) live demo in [amortizacoes.netlify.app/](https://amortizacoes.netlify.app/)
 
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/000606b1f18fcc574c02/maintainability)](https://codeclimate.com/github/sergiosaint/Finance/maintainability)
+
 The main algorithm of this app is a function which calculates the constant payments for a loan based on a constant interest rate. (A similar one exists in Excel called PMT)
 
 V - Value to repay  
