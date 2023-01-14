@@ -133,63 +133,84 @@ function LoanRepayment(props: ILoanRepaymentProps) {
             <div className='form-group'>
 
               <label htmlFor='debt'>Valor em dívida</label>
-              <input type='text'
-                     className='form-control'
-                     name='debt'
-                     value={debt}
-                    onChange={e => onAmountChange(e, setDebt)}
-              />
+              <div className="input-group">
+                <input type='text'
+                       className='form-control'
+                       name='debt'
+                       value={debt}
+                       onChange={e => onAmountChange(e, setDebt)}
+                />
+                <span className="input-group-text"> € </span>
+              </div>
 
-             <label htmlFor='interest'>Taxa de juro anual</label>
-              <input type='text'
-                     className='form-control'
-                     name='interest'
-                     value={interest}
-                     onChange={e => onAmountChange(e, setInterest)}
-             />
+              <label htmlFor='interest' className='labelSpacing'>Taxa de juro anual</label>
+              <div className="input-group">
+                <input type='text'
+                       className='form-control'
+                       name='interest'
+                       value={interest}
+                       onChange={e => onAmountChange(e, setInterest)}
+                />
+                <span className="input-group-text"> % </span>
+              </div>
 
-              <label htmlFor='numberOfPayments'>Prestações mensais em falta</label>
-              <input type='text'
-                     className='form-control'
-                     name='numberOfPayments'
-                     value={numberOfPayments}
-                     onChange={e => onIntegerAmountChange(e, setNumberOfPayments)}
-              />
+              <label htmlFor='numberOfPayments' className='labelSpacing'>Prestações mensais em falta</label>
+              <div className="input-group">
+                <input type='text'
+                       className='form-control'
+                       name='numberOfPayments'
+                       value={numberOfPayments}
+                       onChange={e => onIntegerAmountChange(e, setNumberOfPayments)}
+                />
+                <span className="input-group-text"> # </span>
+              </div>
 
-              <label htmlFor='repaymentValue'>Valor a despender</label>
-              <input type='text'
-                     className='form-control'
-                     name='repaymentValue'
-                     value={repaymentValue}
-                     onChange={e => onAmountChange(e, setRepaymentValue)}
-              />
+              <label htmlFor='repaymentValue' className='labelSpacing'>Valor a despender</label>
+              <div className="input-group">
+                <input type='text'
+                       className='form-control'
+                       name='repaymentValue'
+                       value={repaymentValue}
+                       onChange={e => onAmountChange(e, setRepaymentValue)}
+                />
+                <span className="input-group-text"> € </span>
+              </div>
 
-              <label htmlFor='repaymentTax'>Taxa de amortização</label>
-              <input type='text'
-                    className='form-control'
-                    name='repaymentTax'
-                    value={repaymentTax}
-                    onChange={e => onAmountChange(e, setRepaymentTax)}
-              />
+              <label htmlFor='repaymentTax' className='labelSpacing'>Taxa de amortização</label>
+              <div className="input-group">
+                <input type='text'
+                      className='form-control'
+                      name='repaymentTax'
+                      value={repaymentTax}
+                      onChange={e => onAmountChange(e, setRepaymentTax)}
+                />
+                <span className="input-group-text"> % </span>
+              </div>
 
-              <label htmlFor='repaymentEveryXMonths'>Pagamentos de x em x meses</label>
-              <input type='text'
-                    className='form-control'
-                    name='repaymentEveryXMonths'
-                    value={repaymentEveryXMonths}
-                    onChange={e => onIntegerAmountChange(e, setRepaymentEveryXMonths)}
-              />
+              <label htmlFor='repaymentEveryXMonths' className='labelSpacing'>Pagamentos de x em x meses</label>
+              <div className="input-group">
+                <input type='text'
+                      className='form-control'
+                      name='repaymentEveryXMonths'
+                      value={repaymentEveryXMonths}
+                      onChange={e => onIntegerAmountChange(e, setRepaymentEveryXMonths)}
+                />
+                <span className="input-group-text"> # </span>
+              </div>
 
-              <label htmlFor='startMonth'>Começar em x meses</label>
-              <input type='text'
-                     className='form-control'
-                     name='startMonth'
-                     value={startMonth}
-                     onChange={e => onIntegerAmountChange(e, setStartMonth)}
-              />
+              <label htmlFor='startMonth' className='labelSpacing'>Começar em x meses</label>
+              <div className='input-group'>
+                <input type='text'
+                       className='form-control'
+                       name='startMonth'
+                       value={startMonth}
+                       onChange={e => onIntegerAmountChange(e, setStartMonth)}
+                />
+                <span className="input-group-text"> # </span>
+              </div>
 
-              <label htmlFor='useSavings'>Usar poupanças</label>
-              <input type="checkbox"
+              <label htmlFor='useSavings' className='labelSpacing'>Usar poupanças</label>
+              <input type='checkbox'
                      name='useSavings'
                      checked={useSavings}
                      onChange={handleChangeUseSavings}

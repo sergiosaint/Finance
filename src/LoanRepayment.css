@@ -11,6 +11,15 @@
   margin: 20px;
 }
 
+.input-group-text {
+  width: 38px;
+}
+
+.labelSpacing {
+  padding-right: 8px;
+  padding-top: 3px;
+}
+
 .results {
   float: left;
   background-color: aliceblue;
