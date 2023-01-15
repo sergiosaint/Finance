@@ -56,14 +56,19 @@ function getResults(
   let beforeInstallments = calculateInstallments(debt, anualInterest, numberOfPayments, 0, 0, 0, 0, false)
 
   const savedMonths = beforeInstallments.installments.length-afterInstallments.installments.length
+  const afterTaxCosts = RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes)
+  const savedMoney = RoundToTwoDecimalPlaces(beforeInstallments.totalInterest - afterTaxCosts)
+
 
   return (
     <div className='results'>
       <div className='text'>
         Total em juros{repaymentValue !== 0 && <> antes</>}: {beforeInstallments.totalInterest}€<br/>
         {repaymentValue !== 0 &&
-        <>Total em juros e taxas depois: {`${RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes)}€ (${afterInstallments.totalInterest} + ${afterInstallments.totalTaxes})`}<br/>
-        poupanca: {RoundToTwoDecimalPlaces(beforeInstallments.totalInterest - RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes))}€<br/>
+        <>Total em juros e taxas depois: {`${afterTaxCosts}€ (${afterInstallments.totalInterest} + ${afterInstallments.totalTaxes})`}<br/>
+        poupanca: {savedMoney}€<br/>
+        {repaymentEveryXMonths === 0 && <>Equivalente a colocar os {repaymentValue}€ a {RoundToTwoDecimalPlaces((savedMoney/(numberOfPayments-startMonth))*100/repaymentValue*12)}% de juro anual durante os restantes {numberOfPayments-startMonth} meses. (sem reinvestir os juros anuais)<br/></>}
+        
         {savedTimeText(savedMonths)}<br/></>}
       </div>
       <table className="table table-striped table h6-sm mb-0">
