@@ -11,6 +11,15 @@
   margin: 20px;
 }
 
+.graph {
+  float: left;
+  background-color: aliceblue;
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px;
+  min-width: 600px;
+}
+
 .input-group-text {
   width: 38px;
 }

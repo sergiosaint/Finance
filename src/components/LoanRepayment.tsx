@@ -1,6 +1,7 @@
-import React from 'react';
-import calculateInstallments from './LoanRepaymentCalculator';
+import React, { useEffect } from 'react';
+import {calculateInstallments, ILoanRepaymentInstalments } from './LoanRepaymentCalculator';
 import '../LoanRepayment.css'
+import { BeforeAndAfterGraph } from './BeforeAndAfterGraph';
 
 interface ILoanRepaymentProps {
   mixesForWave: number
@@ -35,25 +36,23 @@ function savedTimeText(months: number) : string {
 }
 
 function getResults(
-  stringDebt :string,
-  stringYearInterest :string,
+  beforeInstallments: ILoanRepaymentInstalments,
+  afterInstallments: ILoanRepaymentInstalments,
+  //stringDebt :string,
+  //stringYearInterest :string,
   stringNumberOfPayments :string,
   stringStartMonth : string,
   stringRepaymentEveryXMonths : string,
   stringRepaymentValue : string,
-  stringRepaymentTax : string,
-  useSavings: boolean) : JSX.Element
+  //stringRepaymentTax : string,
+  //useSavings: boolean
+  ) : JSX.Element
   {
-  let debt = parseFloat(stringDebt);
-  const anualInterest = parseFloat(stringYearInterest);
+  //let debt = parseFloat(stringDebt);
   const numberOfPayments = parseFloat(stringNumberOfPayments);
   const startMonth = parseFloat(stringStartMonth);
   const repaymentEveryXMonths = parseFloat(stringRepaymentEveryXMonths);
   const repaymentValue = parseFloat(stringRepaymentValue);
-  const repaymentTax = parseFloat(stringRepaymentTax);
-
-  let afterInstallments = calculateInstallments(debt, anualInterest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, useSavings)
-  let beforeInstallments = calculateInstallments(debt, anualInterest, numberOfPayments, 0, 0, 0, 0, false)
 
   const savedMonths = beforeInstallments.installments.length-afterInstallments.installments.length
   const afterTaxCosts = RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes)
@@ -67,7 +66,7 @@ function getResults(
         {repaymentValue !== 0 &&
         <>Total em juros e taxas depois: {`${afterTaxCosts}€ (${afterInstallments.totalInterest} + ${afterInstallments.totalTaxes})`}<br/>
         poupanca: {savedMoney}€<br/>
-        {repaymentEveryXMonths === 0 && <>Equivalente a colocar os {repaymentValue}€ a {RoundToTwoDecimalPlaces((savedMoney/(numberOfPayments-startMonth))*100/repaymentValue*12)}% de juro anual durante os restantes {numberOfPayments-startMonth} meses. (sem reinvestir os juros anuais)<br/></>}
+        {repaymentEveryXMonths === 0 && false && <>Equivalente a colocar os {repaymentValue}€ a {RoundToTwoDecimalPlaces((savedMoney/(numberOfPayments-startMonth))*100/repaymentValue*12)}% de juro anual durante os restantes {numberOfPayments-startMonth} meses. (sem reinvestir os juros anuais)<br/></>}
         
         {savedTimeText(savedMonths)}<br/></>}
       </div>
@@ -107,6 +106,9 @@ function LoanRepayment(props: ILoanRepaymentProps) {
   const [startMonth, setStartMonth] = React.useState("0");
   const [useSavings, setUseSavings] = React.useState(false);
   
+  const [beforeInstallments, setBeforeInstallments] = React.useState<ILoanRepaymentInstalments>({originalMonthlyPayment: 0, totalInterest: 0, totalTaxes: 0, installments: []})
+  const [afterInstallments, setAfterInstallments] = React.useState<ILoanRepaymentInstalments>({originalMonthlyPayment: 0, totalInterest: 0, totalTaxes: 0, installments: []})
+  
 
   const onAmountChange = (e:any, set: any) => {
     const amount = e.target.value;
@@ -127,6 +129,19 @@ function LoanRepayment(props: ILoanRepaymentProps) {
   const handleChangeUseSavings = () => {
     setUseSavings(!useSavings);
   };
+
+  useEffect(() => {
+    const ndebt = parseFloat(debt);
+    const nanualInterest = parseFloat(interest);
+    const nnumberOfPayments = parseFloat(numberOfPayments);
+    const nstartMonth = parseFloat(startMonth);
+    const nrepaymentEveryXMonths = parseFloat(repaymentEveryXMonths);
+    const nrepaymentValue = parseFloat(repaymentValue);
+    const nrepaymentTax = parseFloat(repaymentTax);
+
+  setAfterInstallments(calculateInstallments(ndebt, nanualInterest, nnumberOfPayments, nstartMonth, nrepaymentEveryXMonths, nrepaymentValue, nrepaymentTax, useSavings))
+  setBeforeInstallments(calculateInstallments(ndebt, nanualInterest, nnumberOfPayments, 0, 0, 0, 0, false))
+  },[debt, interest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, useSavings])
 
   return (
 
@@ -224,7 +239,9 @@ function LoanRepayment(props: ILoanRepaymentProps) {
           </form>
         </div>
 
-        {getResults(debt, interest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, useSavings)}
+        {getResults(beforeInstallments, afterInstallments, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue)}
+
+        {BeforeAndAfterGraph(beforeInstallments, afterInstallments)}
       </>
   )
 }

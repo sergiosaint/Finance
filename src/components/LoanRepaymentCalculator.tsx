@@ -94,4 +94,5 @@ function calculateInstallments (
   return { originalMonthlyPayment, totalInterest, totalTaxes, installments};
 }
 
-export default calculateInstallments
+export { calculateInstallments }
+export type { ILoanRepaymentInstalments, ILoanRepaymentInstalment }
