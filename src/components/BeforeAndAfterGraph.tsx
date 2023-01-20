@@ -43,25 +43,9 @@ function BeforeAndAfterGraph (
               },
             },
           },
-          markers: { size: 0,
-            colors: undefined,
-            strokeColors: '#fff',
-            strokeWidth: 2,
-            strokeOpacity: 0.9,
-            strokeDashArray: 0,
-            fillOpacity: 1,
-            discrete: [],
-            shape: "circle",
-            radius: 2,
-            offsetX: 0,
-            offsetY: 0,
-            onClick: undefined,
-            onDblClick: undefined,
-            showNullDataPoints: true,
-            hover: {
-              size: undefined,
-              sizeOffset: 3
-            }},
+          dataLabels: {
+            enabled: false,
+          },
           xaxis: {
             type: 'numeric',
             categories: categories}
