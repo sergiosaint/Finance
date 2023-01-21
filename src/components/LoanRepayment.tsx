@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import {calculateInstallments, ILoanRepaymentInstalments } from './LoanRepaymentCalculator';
 import '../LoanRepayment.css'
 import { BeforeAndAfterGraph } from './BeforeAndAfterGraph';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 interface ILoanRepaymentProps {
   mixesForWave: number
@@ -196,16 +197,26 @@ function LoanRepayment(props: ILoanRepaymentProps) {
                 <span className="input-group-text"> € </span>
               </div>
 
-              <label htmlFor='repaymentTax' className='labelSpacing'>Taxa de amortização</label>
-              <div className="input-group">
-                <input type='text'
-                      className='form-control'
-                      name='repaymentTax'
-                      value={repaymentTax}
-                      onChange={e => onAmountChange(e, setRepaymentTax)}
-                />
-                <span className="input-group-text"> % </span>
-              </div>
+              <OverlayTrigger
+                overlay={<Tooltip id="button-tooltip" {...props}>
+                Taxa aplicada ao valor de cada amortização. Normalmente 0.5% para taxa variável e 2% para taxa fixa. No entanto durante o ano de 2023 será 0%.
+              </Tooltip>}
+                placement="top"
+                delay={{ show: 250, hide: 300 }}
+              >
+                <div>
+                  <label htmlFor='repaymentTax' className='labelSpacing'>Taxa de amortização</label>
+                  <div className="input-group">
+                    <input type='text'
+                           className='form-control'
+                           name='repaymentTax'
+                           value={repaymentTax}
+                           onChange={e => onAmountChange(e, setRepaymentTax)}
+                    />
+                    <span className="input-group-text"> % </span>
+                  </div>
+                </div>
+              </OverlayTrigger>
 
               <label htmlFor='repaymentEveryXMonths' className='labelSpacing'>Pagamentos de x em x meses</label>
               <div className="input-group">
@@ -229,12 +240,22 @@ function LoanRepayment(props: ILoanRepaymentProps) {
                 <span className="input-group-text"> # </span>
               </div>
 
-              <label htmlFor='useSavings' className='labelSpacing'>Usar poupanças</label>
-              <input type='checkbox'
-                     name='useSavings'
-                     checked={useSavings}
-                     onChange={handleChangeUseSavings}
-              />
+              <OverlayTrigger
+                overlay={<Tooltip id="button-tooltip" {...props}>
+                Após cada amortização o valor da mensalidade do crédito é reduzida. Pretende acumular esse valor e juntar ao valor a despender?
+              </Tooltip>}
+                placement="top"
+                delay={{ show: 250, hide: 300 }}
+              >
+                <div>
+                  <label htmlFor='useSavings' className='labelSpacing'>Usar poupanças</label>
+                  <input type='checkbox'
+                    name='useSavings'
+                    checked={useSavings}
+                    onChange={handleChangeUseSavings}
+                  />
+                </div>
+              </OverlayTrigger>
             </div>
           </form>
         </div>
