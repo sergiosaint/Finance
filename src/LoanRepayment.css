@@ -3,7 +3,7 @@
   text-align: center;
 }
 
-.input {
+.roundedBox {
   float: left;
   background-color: aliceblue;
   border-radius: 15px;
@@ -12,11 +12,6 @@
 }
 
 .graph {
-  float: left;
-  background-color: aliceblue;
-  border-radius: 15px;
-  padding: 20px;
-  margin: 20px;
   min-width: 600px;
 }
 
@@ -41,6 +36,11 @@
   position: sticky;
   top: 0;
   background-color: rgb(205, 207, 211) !important;
+}
+
+.stickTop {
+  position: sticky !important;
+  top: 0;
 }
 
 .results .text {

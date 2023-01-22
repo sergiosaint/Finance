@@ -27,7 +27,7 @@ function BeforeAndAfterGraph (
       }
     }
 
-    return <div className='graph'>
+    return <div className='graph roundedBox stickTop'>
     <ReactApexChart options={{
           chart: {
             height: 350,

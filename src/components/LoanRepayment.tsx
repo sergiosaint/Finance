@@ -149,7 +149,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
       <>
         <h2 className='title'>Calculo de amortização antecipada</h2>
 
-        <div className='input'>
+        <div className='roundedBox'>
           <form className='demoForm'>
             <div className='form-group'>
 
