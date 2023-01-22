@@ -3,14 +3,6 @@
   text-align: center;
 }
 
-.roundedBox {
-  float: left;
-  background-color: aliceblue;
-  border-radius: 15px;
-  padding: 20px;
-  margin: 20px;
-}
-
 .graph {
   min-width: 600px;
 }
@@ -24,8 +16,7 @@
   padding-top: 3px;
 }
 
-.results {
-  float: left;
+.roundedBox {
   background-color: aliceblue;
   border-radius: 15px;
   padding: 20px;
@@ -38,9 +29,20 @@
   background-color: rgb(205, 207, 211) !important;
 }
 
-.stickTop {
-  position: sticky !important;
-  top: 0;
+.grid-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.sticky {
+  position: sticky;
+  top: 10px;
+}
+
+@media screen and (max-width: 1800px) {
+  .sticky {position: inherit; top: auto;}
 }
 
 .results .text {

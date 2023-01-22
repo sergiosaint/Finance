@@ -27,36 +27,37 @@ function BeforeAndAfterGraph (
       }
     }
 
-    return <div className='graph roundedBox stickTop'>
-    <ReactApexChart options={{
-          chart: {
-            height: 350,
-            type: 'area'
-          },
-          tooltip: {
-            
-            x: {
-              formatter: function (seriesName) {
-                let ano = Math.floor(seriesName/12);
-                let mes = seriesName%12;
-                return "Pagamento: " + seriesName + " - ano " + ano + " mês " + mes
-              },
-            },
-          },
-          dataLabels: {
-            enabled: false,
-          },
-          xaxis: {
-            type: 'numeric',
-            categories: categories}
-          }} series={[{
-            name: 'Sem Amortização',
-            data: beforeSeries
-          }, {
-            name: 'Com Amortização',
-            data: afterSeries,
-          }]} type="area" height={350} />
-          </div>
+    return  <div className='roundedBox sticky graph'>
+              <ReactApexChart options={{
+                              chart: {
+                              height: 350,
+                              type: 'area'
+                              },
+                              tooltip: {
+                                x: {
+                                  formatter: function (seriesName) {
+                                    let ano = Math.floor(seriesName/12);
+                                    let mes = seriesName%12;
+                                    return "Pagamento: " + seriesName + " - ano " + ano + " mês " + mes
+                                  },
+                               },
+                              },
+                              dataLabels: {
+                                enabled: false,
+                              },
+                              xaxis: {
+                                type: 'numeric',
+                                categories: categories}
+                              }} series={[{
+                                name: 'Sem Amortização',
+                                data: beforeSeries
+                              }, {
+                                name: 'Com Amortização',
+                                data: afterSeries,
+                              }]}
+                              type="area"
+                              height={350} />
+            </div>
   
   }
 
