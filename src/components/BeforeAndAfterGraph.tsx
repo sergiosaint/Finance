@@ -27,7 +27,8 @@ function BeforeAndAfterGraph (
       }
     }
 
-    return  <div className='roundedBox sticky graph'>
+    return  <div className='sticky graph'>
+      <div className='roundedBox'>
               <ReactApexChart options={{
                               chart: {
                               height: 350,
@@ -57,7 +58,7 @@ function BeforeAndAfterGraph (
                               }]}
                               type="area"
                               height={350} />
-            </div>
+            </div></div>
   
   }
 

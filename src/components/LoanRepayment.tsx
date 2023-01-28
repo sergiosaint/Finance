@@ -60,7 +60,7 @@ function getResults(
   const savedMoney = RoundToTwoDecimalPlaces(beforeInstallments.totalInterest - afterTaxCosts)
 
   return (
-    <div className='roundedBox results'>
+    <div className='results roundedBox'>
       <div className='text'>
         Total em juros{repaymentValue !== 0 && <> antes</>}: {beforeInstallments.totalInterest}€<br/>
         {repaymentValue !== 0 &&
@@ -150,7 +150,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
         <h2 className='title'>Calculo de amortização antecipada</h2>
 
         <div className='grid-container'>
-          <div className='roundedBox sticky settings'>
+          <div className='sticky settings roundedBox'>
             <form className='demoForm'>
               <div className='form-group'>
 
