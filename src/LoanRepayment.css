@@ -3,8 +3,12 @@
   text-align: center;
 }
 
+.settings {
+  width: 260px;
+}
+
 .graph {
-  min-width: 600px;
+  flex: 1;
 }
 
 .input-group-text {
@@ -43,6 +47,10 @@
 
 @media screen and (max-width: 1800px) {
   .sticky {position: inherit; top: auto;}
+}
+
+.results{
+  max-width: 890px;
 }
 
 .results .text {

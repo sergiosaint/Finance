@@ -59,15 +59,15 @@ function getResults(
   const afterTaxCosts = RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes)
   const savedMoney = RoundToTwoDecimalPlaces(beforeInstallments.totalInterest - afterTaxCosts)
 
-
   return (
     <div className='roundedBox results'>
       <div className='text'>
         Total em juros{repaymentValue !== 0 && <> antes</>}: {beforeInstallments.totalInterest}€<br/>
         {repaymentValue !== 0 &&
         <>Total em juros e taxas depois: {`${afterTaxCosts}€ (${afterInstallments.totalInterest} + ${afterInstallments.totalTaxes})`}<br/>
-        poupanca: {savedMoney}€<br/>
-        {repaymentEveryXMonths === 0 && false && <>Equivalente a colocar os {repaymentValue}€ a {RoundToTwoDecimalPlaces((savedMoney/(numberOfPayments-startMonth))*100/repaymentValue*12)}% de juro anual durante os restantes {numberOfPayments-startMonth} meses. (sem reinvestir os juros anuais)<br/></>}
+        poupança: {savedMoney}€<br/>
+        {repaymentEveryXMonths === 0 && afterInstallments.installments.length > startMonth+1 && <><br/>Para ter a mesma liquidez e poupança em juros é equivalente a colocar os {repaymentValue}€ a {RoundToTwoDecimalPlaces(((afterInstallments.installments[startMonth].monthlyPayment - afterInstallments.installments[startMonth+1].monthlyPayment) + savedMoney/(numberOfPayments-startMonth))*100/repaymentValue*12)}% de juro liquido anual durante os restantes {numberOfPayments-startMonth} meses. (Isto sem contar com poupanças em seguros.)<br/></>}
+        {repaymentEveryXMonths === 0 && <><br/>Para ter apenas a mesma poupança é equivalente a colocar os {repaymentValue}€ a {RoundToTwoDecimalPlaces((savedMoney/(numberOfPayments-startMonth))*100/repaymentValue*12)}% de juro anual durante os restantes {numberOfPayments-startMonth} meses. (sem reinvestir os juros anuais)<br/><br/></>}
       
         {savedTimeText(savedMonths)}<br/></>}
       </div>
@@ -150,7 +150,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
         <h2 className='title'>Calculo de amortização antecipada</h2>
 
         <div className='grid-container'>
-          <div className='roundedBox sticky'>
+          <div className='roundedBox sticky settings'>
             <form className='demoForm'>
               <div className='form-group'>
 
