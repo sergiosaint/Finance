@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import {calculateInstallments, ILoanRepaymentInstalments } from './LoanRepaymentCalculator';
 import '../LoanRepayment.css'
 import { BeforeAndAfterGraph } from './BeforeAndAfterGraph';
+import { AmortizationGraph } from './AmortizationGraph';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 interface ILoanRepaymentProps {
@@ -274,7 +275,10 @@ function LoanRepayment(props: ILoanRepaymentProps) {
 
           {getResults(beforeInstallments, afterInstallments, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue)}
 
-          {BeforeAndAfterGraph(beforeInstallments, afterInstallments)}
+          <div className='sticky graph'>
+            {BeforeAndAfterGraph(beforeInstallments, afterInstallments)}
+            {AmortizationGraph(afterInstallments)}
+          </div>
 
         </div>
       </>
