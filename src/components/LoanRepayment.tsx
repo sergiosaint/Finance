@@ -3,7 +3,8 @@ import {calculateInstallments, ILoanRepaymentInstalments } from './LoanRepayment
 import '../LoanRepayment.css'
 import { BeforeAndAfterGraph } from './BeforeAndAfterGraph';
 import { AmortizationGraph } from './AmortizationGraph';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Granularity, groupInstallments, IScheduleRow, periodLabel } from './ScheduleGrouping';
+import { OverlayTrigger, ToggleButton, ToggleButtonGroup, Tooltip } from 'react-bootstrap';
 
 interface ILoanRepaymentProps {
   mixesForWave: number
@@ -46,6 +47,8 @@ function savedTimeText(months: number) : string {
 function getResults(
   beforeInstallments: ILoanRepaymentInstalments,
   afterInstallments: ILoanRepaymentInstalments,
+  afterRows: IScheduleRow[],
+  granularity: Granularity,
   //stringDebt :string,
   //stringYearInterest :string,
   stringNumberOfPayments :string,
@@ -86,7 +89,7 @@ function getResults(
       <table className="table table-striped table h6-sm mb-0">
         <tbody>
           <tr>
-            <th>#</th>
+            <th>{periodLabel(granularity)}</th>
             <th>Divida</th>
             <th>Pagamento</th>
             <th>Juro</th>
@@ -94,15 +97,15 @@ function getResults(
             <th>Amortizado Extra</th>
             <th>Taxa de amortização Extra</th>
           </tr>
-          {afterInstallments.installments.map(installment =>
-          <tr key={`"${installment.installmentNumber}"`}>
-            <td>{installment.installmentNumber+1}</td>
-            <td>{installment.currentDebt}</td>
-            <td>{installment.monthlyPayment}{installment.extraRepaymentValue > 0 && `+(${RoundToTwoDecimalPlaces(installment.extraRepaymentValue+installment.extraRepaymentTax)})`}</td>
-            <td>{installment.interest}</td>
-            <td>{RoundToTwoDecimalPlaces(installment.monthlyPayment-installment.interest)}</td>
-            <td>{installment.extraRepaymentValue}</td>
-            <td>{installment.extraRepaymentTax}</td>
+          {afterRows.map(row =>
+          <tr key={row.period}>
+            <td>{row.period}</td>
+            <td>{row.startDebt}</td>
+            <td>{row.payment}{row.extraRepaymentValue > 0 && `+(${RoundToTwoDecimalPlaces(row.extraRepaymentValue+row.extraRepaymentTax)})`}</td>
+            <td>{row.interest}</td>
+            <td>{row.principal}</td>
+            <td>{row.extraRepaymentValue}</td>
+            <td>{row.extraRepaymentTax}</td>
           </tr>)}
         </tbody>
       </table>
@@ -118,6 +121,7 @@ function LoanRepayment(props: ILoanRepaymentProps) {
   const [repaymentEveryXMonths, setRepaymentEveryXMonths] = React.useState("0");
   const [startMonth, setStartMonth] = React.useState("0");
   const [useSavings, setUseSavings] = React.useState(false);
+  const [granularity, setGranularity] = React.useState<Granularity>('month');
   
   const [beforeInstallments, setBeforeInstallments] = React.useState<ILoanRepaymentInstalments>({originalMonthlyPayment: 0, totalInterest: 0, totalTaxes: 0, installments: []})
   const [afterInstallments, setAfterInstallments] = React.useState<ILoanRepaymentInstalments>({originalMonthlyPayment: 0, totalInterest: 0, totalTaxes: 0, installments: []})
@@ -156,10 +160,23 @@ function LoanRepayment(props: ILoanRepaymentProps) {
   setBeforeInstallments(calculateInstallments(ndebt, nanualInterest, nnumberOfPayments, 0, 0, 0, 0, false))
   },[debt, interest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, useSavings])
 
+  const beforeRows = groupInstallments(beforeInstallments.installments, granularity);
+  const afterRows = groupInstallments(afterInstallments.installments, granularity);
+
   return (
 
       <>
         <h2 className='title'>Calculo de amortização antecipada</h2>
+
+        <div className='granularity'>
+          <ToggleButtonGroup type='radio'
+                             name='granularity'
+                             value={granularity}
+                             onChange={(value: Granularity) => setGranularity(value)}>
+            <ToggleButton id='granularity-month' value='month' variant='outline-primary'>Mensal</ToggleButton>
+            <ToggleButton id='granularity-year' value='year' variant='outline-primary'>Anual</ToggleButton>
+          </ToggleButtonGroup>
+        </div>
 
         <div className='grid-container'>
           <div className='sticky settings roundedBox'>
@@ -273,11 +290,11 @@ function LoanRepayment(props: ILoanRepaymentProps) {
             </form>
           </div>
 
-          {getResults(beforeInstallments, afterInstallments, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue)}
+          {getResults(beforeInstallments, afterInstallments, afterRows, granularity, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue)}
 
           <div className='sticky graph'>
-            {BeforeAndAfterGraph(beforeInstallments, afterInstallments)}
-            {AmortizationGraph(afterInstallments)}
+            {BeforeAndAfterGraph(beforeRows, afterRows, granularity)}
+            {AmortizationGraph(afterRows, granularity)}
           </div>
 
         </div>

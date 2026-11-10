@@ -1,37 +1,28 @@
 import ReactApexChart from "react-apexcharts";
-import { ILoanRepaymentInstalments } from "./LoanRepaymentCalculator";
+import { Granularity, IScheduleRow, periodLabel } from "./ScheduleGrouping";
 
 function BeforeAndAfterGraph (
-  beforeInstallments :ILoanRepaymentInstalments,
-  afterInstallments :ILoanRepaymentInstalments) : JSX.Element
+  beforeRows :IScheduleRow[],
+  afterRows :IScheduleRow[],
+  granularity :Granularity) : JSX.Element
   {
-    let beforeSeries:number[] = []
-    let afterSeries:number[] = []
+    const categories : number[] = [];
+    const beforeSeries : number[] = [];
+    const afterSeries : number[] = [];
 
-    let categories : number[] = [];
-
-    for(let i = 0; i < beforeInstallments.installments.length; i++){
-      categories.push(i);
-      
-      if(beforeInstallments && beforeInstallments.installments && beforeInstallments.installments.length > i){
-        beforeSeries.push(beforeInstallments.installments[i].currentDebt)
-
-  
-        if(afterInstallments && afterInstallments.installments){
-          if(afterInstallments.installments.length > i){
-            afterSeries.push(afterInstallments.installments[i].currentDebt)
-          }else{
-            afterSeries.push(0)
-          }
-        }
-      }
+    if (beforeRows.length > 0) {
+      categories.push(0);
+      beforeSeries.push(beforeRows[0].startDebt);
+      afterSeries.push(afterRows.length > 0 ? afterRows[0].startDebt : 0);
     }
 
-    if (beforeInstallments.installments.length > 0) {
-      categories.push(beforeInstallments.installments.length);
-      beforeSeries.push(0);
-      afterSeries.push(0);
+    for (let i = 0; i < beforeRows.length; i++) {
+      categories.push(i + 1);
+      beforeSeries.push(beforeRows[i].endDebt);
+      afterSeries.push(i < afterRows.length ? afterRows[i].endDebt : 0);
     }
+
+    const label = periodLabel(granularity);
 
     return  <div className='roundedBox'>
               <ReactApexChart options={{
@@ -41,10 +32,8 @@ function BeforeAndAfterGraph (
                               },
                               tooltip: {
                                 x: {
-                                  formatter: function (seriesName) {
-                                    let ano = Math.floor(seriesName/12);
-                                    let mes = seriesName%12;
-                                    return "Pagamento: " + seriesName + " - ano " + ano + " mês " + mes
+                                  formatter: function (period) {
+                                    return label + " " + period
                                   },
                                },
                               },
@@ -53,7 +42,8 @@ function BeforeAndAfterGraph (
                               },
                               xaxis: {
                                 type: 'numeric',
-                                categories: categories}
+                                categories: categories,
+                                title: { text: label }}
                               }} series={[{
                                 name: 'Sem Amortização',
                                 data: beforeSeries

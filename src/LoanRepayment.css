@@ -3,6 +3,11 @@
   text-align: center;
 }
 
+.granularity {
+  text-align: center;
+  margin-top: 10px;
+}
+
 .settings {
   width: 260px;
 }

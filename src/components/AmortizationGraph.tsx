@@ -1,21 +1,19 @@
 import ReactApexChart from "react-apexcharts";
-import { ILoanRepaymentInstalments } from "./LoanRepaymentCalculator";
+import { Granularity, IScheduleRow, periodLabel } from "./ScheduleGrouping";
 
 function roundToCents(num: number): number {
   return Math.round(num * 100) / 100;
 }
 
-function AmortizationGraph(loan: ILoanRepaymentInstalments): JSX.Element {
-  const installments = loan.installments;
-
-  const years: number[] = [];
+function AmortizationGraph(rows: IScheduleRow[], granularity: Granularity): JSX.Element {
+  const periods: number[] = [];
   const balanceSeries: number[] = [];
   const interestSeries: number[] = [];
   const paymentSeries: number[] = [];
 
-  if (installments.length > 0) {
-    years.push(0);
-    balanceSeries.push(installments[0].currentDebt);
+  if (rows.length > 0) {
+    periods.push(0);
+    balanceSeries.push(rows[0].startDebt);
     interestSeries.push(0);
     paymentSeries.push(0);
   }
@@ -23,19 +21,17 @@ function AmortizationGraph(loan: ILoanRepaymentInstalments): JSX.Element {
   let totalInterest = 0;
   let totalPaid = 0;
 
-  for (let i = 0; i < installments.length; i++) {
-    const installment = installments[i];
-    totalInterest += installment.interest;
-    totalPaid += installment.monthlyPayment + installment.extraRepaymentValue + installment.extraRepaymentTax;
+  for (const row of rows) {
+    totalInterest += row.interest;
+    totalPaid += row.payment + row.extraRepaymentValue + row.extraRepaymentTax;
 
-    const isLast = i === installments.length - 1;
-    if ((i + 1) % 12 === 0 || isLast) {
-      years.push(Math.ceil((i + 1) / 12));
-      balanceSeries.push(isLast ? 0 : installments[i + 1].currentDebt);
-      interestSeries.push(roundToCents(totalInterest));
-      paymentSeries.push(roundToCents(totalPaid));
-    }
+    periods.push(row.period);
+    balanceSeries.push(row.endDebt);
+    interestSeries.push(roundToCents(totalInterest));
+    paymentSeries.push(roundToCents(totalPaid));
   }
+
+  const label = periodLabel(granularity);
 
   return <div className='roundedBox'>
     <ReactApexChart options={{
@@ -48,8 +44,8 @@ function AmortizationGraph(loan: ILoanRepaymentInstalments): JSX.Element {
                       },
                       tooltip: {
                         x: {
-                          formatter: function (year) {
-                            return "Ano " + year
+                          formatter: function (period) {
+                            return label + " " + period
                           },
                         },
                         y: {
@@ -63,8 +59,8 @@ function AmortizationGraph(loan: ILoanRepaymentInstalments): JSX.Element {
                       },
                       xaxis: {
                         type: 'numeric',
-                        categories: years,
-                        title: { text: 'Ano' }
+                        categories: periods,
+                        title: { text: label }
                       },
                       yaxis: {
                         labels: {
