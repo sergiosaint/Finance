@@ -160,7 +160,6 @@ function LoanRepayment(props: ILoanRepaymentProps) {
   setBeforeInstallments(calculateInstallments(ndebt, nanualInterest, nnumberOfPayments, 0, 0, 0, 0, false))
   },[debt, interest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax, useSavings])
 
-  const beforeRows = groupInstallments(beforeInstallments.installments, granularity);
   const afterRows = groupInstallments(afterInstallments.installments, granularity);
 
   return (
@@ -293,8 +292,8 @@ function LoanRepayment(props: ILoanRepaymentProps) {
           {getResults(beforeInstallments, afterInstallments, afterRows, granularity, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue)}
 
           <div className='sticky graph'>
-            {BeforeAndAfterGraph(beforeRows, afterRows, granularity)}
-            {AmortizationGraph(afterRows, granularity)}
+            {BeforeAndAfterGraph(beforeInstallments.installments, afterInstallments.installments, granularity)}
+            {AmortizationGraph(afterInstallments.installments, granularity)}
           </div>
 
         </div>

@@ -1,26 +1,19 @@
 import ReactApexChart from "react-apexcharts";
-import { Granularity, IScheduleRow, periodLabel } from "./ScheduleGrouping";
+import { ILoanRepaymentInstalment } from "./LoanRepaymentCalculator";
+import { axisPosition, balanceAfterMonths, Granularity, groupInstallments, periodLabel, positionText, sampleMonths } from "./ScheduleGrouping";
 
 function BeforeAndAfterGraph (
-  beforeRows :IScheduleRow[],
-  afterRows :IScheduleRow[],
+  beforeInstallments :ILoanRepaymentInstalment[],
+  afterInstallments :ILoanRepaymentInstalment[],
   granularity :Granularity) : JSX.Element
   {
-    const categories : number[] = [];
-    const beforeSeries : number[] = [];
-    const afterSeries : number[] = [];
+    const beforeRows = groupInstallments(beforeInstallments, 'month');
+    const afterRows = groupInstallments(afterInstallments, 'month');
+    const months = sampleMonths([beforeRows.length, afterRows.length], granularity);
 
-    if (beforeRows.length > 0) {
-      categories.push(0);
-      beforeSeries.push(beforeRows[0].startDebt);
-      afterSeries.push(afterRows.length > 0 ? afterRows[0].startDebt : 0);
-    }
-
-    for (let i = 0; i < beforeRows.length; i++) {
-      categories.push(i + 1);
-      beforeSeries.push(beforeRows[i].endDebt);
-      afterSeries.push(i < afterRows.length ? afterRows[i].endDebt : 0);
-    }
+    const categories = months.map(month => axisPosition(month, granularity));
+    const beforeSeries = months.map(month => balanceAfterMonths(beforeRows, month));
+    const afterSeries = months.map(month => balanceAfterMonths(afterRows, month));
 
     const label = periodLabel(granularity);
 
@@ -30,10 +23,13 @@ function BeforeAndAfterGraph (
                               height: 350,
                               type: 'area'
                               },
+                              stroke: {
+                                curve: 'straight'
+                              },
                               tooltip: {
                                 x: {
-                                  formatter: function (period) {
-                                    return label + " " + period
+                                  formatter: function (position) {
+                                    return positionText(position, granularity)
                                   },
                                },
                               },
@@ -43,6 +39,7 @@ function BeforeAndAfterGraph (
                               xaxis: {
                                 type: 'numeric',
                                 categories: categories,
+                                decimalsInFloat: 0,
                                 title: { text: label }}
                               }} series={[{
                                 name: 'Sem Amortização',

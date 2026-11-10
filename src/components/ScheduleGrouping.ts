@@ -66,5 +66,44 @@ function periodLabel(granularity: Granularity): string {
   return granularity === 'year' ? 'Ano' : 'Mês';
 }
 
-export { groupInstallments, periodLabel }
+// Every period boundary plus each schedule's last month, so a partial final year is plotted at its real position.
+function sampleMonths(scheduleLengths: number[], granularity: Granularity): number[] {
+  const lastMonth = Math.max(0, ...scheduleLengths);
+  if (lastMonth === 0) {
+    return [];
+  }
+
+  const step = granularity === 'year' ? 12 : 1;
+  const months = new Set<number>(scheduleLengths.filter(length => length > 0));
+  for (let month = 0; month <= lastMonth; month += step) {
+    months.add(month);
+  }
+
+  return Array.from(months).sort((a, b) => a - b);
+}
+
+function axisPosition(month: number, granularity: Granularity): number {
+  return granularity === 'year' ? roundToCents(month / 12) : month;
+}
+
+function positionText(position: number, granularity: Granularity): string {
+  if (granularity === 'month') {
+    return `Mês ${position}`;
+  }
+
+  const totalMonths = Math.round(position * 12);
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+  return months === 0 ? `Ano ${years}` : `Ano ${years} e ${months} ${months > 1 ? 'meses' : 'mês'}`;
+}
+
+function balanceAfterMonths(monthlyRows: IScheduleRow[], months: number): number {
+  if (monthlyRows.length === 0 || months > monthlyRows.length) {
+    return 0;
+  }
+
+  return months === 0 ? monthlyRows[0].startDebt : monthlyRows[months - 1].endDebt;
+}
+
+export { groupInstallments, periodLabel, sampleMonths, axisPosition, positionText, balanceAfterMonths }
 export type { Granularity, IScheduleRow }
