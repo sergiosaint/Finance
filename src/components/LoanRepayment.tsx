@@ -12,6 +12,12 @@ function RoundToTwoDecimalPlaces(num : number) : number{
   return Number(Math.round(Number(num + "e+2")) + "e-2");
 }
 
+// Optional inputs: a blank field means "no extra repayment", not an invalid value.
+function parseOrZero(value: string) : number {
+  const parsed = parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
 function savedTimeText(months: number) : string {
   const savedYears = Math.floor(months/12);
   const savedMonths = months % 12;
@@ -51,9 +57,14 @@ function getResults(
   {
   //let debt = parseFloat(stringDebt);
   const numberOfPayments = parseFloat(stringNumberOfPayments);
-  const startMonth = parseFloat(stringStartMonth);
-  const repaymentEveryXMonths = parseFloat(stringRepaymentEveryXMonths);
-  const repaymentValue = parseFloat(stringRepaymentValue);
+  const startMonth = parseOrZero(stringStartMonth);
+  const repaymentEveryXMonths = parseOrZero(stringRepaymentEveryXMonths);
+  const repaymentValue = parseOrZero(stringRepaymentValue);
+  const hasRepaymentMonth = Number.isFinite(numberOfPayments)
+    && Number.isInteger(startMonth)
+    && startMonth >= 0
+    && startMonth < numberOfPayments
+    && startMonth < afterInstallments.installments.length;
 
   const savedMonths = beforeInstallments.installments.length-afterInstallments.installments.length
   const afterTaxCosts = RoundToTwoDecimalPlaces(afterInstallments.totalInterest + afterInstallments.totalTaxes)
@@ -66,8 +77,8 @@ function getResults(
         {repaymentValue !== 0 &&
         <>Total em juros e taxas depois: {`${afterTaxCosts}€ (${afterInstallments.totalInterest} + ${afterInstallments.totalTaxes})`}<br/>
         poupança: {savedMoney}€<br/>
-        {repaymentEveryXMonths === 0 && afterInstallments.installments.length > startMonth+1 && <><br/>Para ter a mesma liquidez e poupança em juros é equivalente a colocar os {repaymentValue}€ a {RoundToTwoDecimalPlaces(((afterInstallments.installments[startMonth].monthlyPayment - afterInstallments.installments[startMonth+1].monthlyPayment) + savedMoney/(numberOfPayments-startMonth))*100/repaymentValue*12)}% de juro liquido anual durante os restantes {numberOfPayments-startMonth} meses. (Isto sem contar com poupanças em seguros.)<br/></>}
-        {repaymentEveryXMonths === 0 && <><br/>Para ter apenas a mesma poupança é equivalente a colocar os {repaymentValue}€ a {RoundToTwoDecimalPlaces((savedMoney/(numberOfPayments-startMonth))*100/repaymentValue*12)}% de juro anual durante os restantes {numberOfPayments-startMonth} meses. (sem reinvestir os juros anuais)<br/><br/></>}
+        {repaymentEveryXMonths === 0 && hasRepaymentMonth && afterInstallments.installments.length > startMonth+1 && <><br/>Para ter a mesma liquidez e poupança em juros é equivalente a colocar os {repaymentValue}€ a {RoundToTwoDecimalPlaces(((afterInstallments.installments[startMonth].monthlyPayment - afterInstallments.installments[startMonth+1].monthlyPayment) + savedMoney/(numberOfPayments-startMonth))*100/repaymentValue*12)}% de juro liquido anual durante os restantes {numberOfPayments-startMonth} meses. (Isto sem contar com poupanças em seguros.)<br/></>}
+        {repaymentEveryXMonths === 0 && hasRepaymentMonth && <><br/>Para ter apenas a mesma poupança é equivalente a colocar os {repaymentValue}€ a {RoundToTwoDecimalPlaces((savedMoney/(numberOfPayments-startMonth))*100/repaymentValue*12)}% de juro anual durante os restantes {numberOfPayments-startMonth} meses. (sem reinvestir os juros anuais)<br/><br/></>}
       
         {savedTimeText(savedMonths)}<br/></>}
       </div>
@@ -135,10 +146,10 @@ function LoanRepayment(props: ILoanRepaymentProps) {
     const ndebt = parseFloat(debt);
     const nanualInterest = parseFloat(interest);
     const nnumberOfPayments = parseFloat(numberOfPayments);
-    const nstartMonth = parseFloat(startMonth);
-    const nrepaymentEveryXMonths = parseFloat(repaymentEveryXMonths);
-    const nrepaymentValue = parseFloat(repaymentValue);
-    const nrepaymentTax = parseFloat(repaymentTax);
+    const nstartMonth = parseOrZero(startMonth);
+    const nrepaymentEveryXMonths = parseOrZero(repaymentEveryXMonths);
+    const nrepaymentValue = parseOrZero(repaymentValue);
+    const nrepaymentTax = parseOrZero(repaymentTax);
 
   setAfterInstallments(calculateInstallments(ndebt, nanualInterest, nnumberOfPayments, nstartMonth, nrepaymentEveryXMonths, nrepaymentValue, nrepaymentTax, useSavings))
   setBeforeInstallments(calculateInstallments(ndebt, nanualInterest, nnumberOfPayments, 0, 0, 0, 0, false))

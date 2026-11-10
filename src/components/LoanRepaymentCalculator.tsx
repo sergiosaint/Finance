@@ -19,6 +19,14 @@ function RoundToTwoDecimalPlaces(num : number) : number{
 }
 
 function calculateRepaymentValue(debt:number, montlyInterest:number, numberOfPayments:number) : number {
+  if (!Number.isFinite(debt) || !Number.isFinite(montlyInterest) || !Number.isFinite(numberOfPayments) || debt <= 0 || numberOfPayments <= 0) {
+    return 0;
+  }
+
+  if (montlyInterest === 0) {
+    return debt / numberOfPayments;
+  }
+
   return (debt / ((1-Math.pow(1+(montlyInterest), -numberOfPayments))/montlyInterest));
 }
 
@@ -32,6 +40,11 @@ function calculateInstallments (
   repaymentTax : number,
   useSavings: boolean) : ILoanRepaymentInstalments
   {
+  if (![debt, anualInterest, numberOfPayments, startMonth, repaymentEveryXMonths, repaymentValue, repaymentTax].every(Number.isFinite)
+    || numberOfPayments <= 0) {
+    return { originalMonthlyPayment: 0, totalInterest: 0, totalTaxes: 0, installments: [] };
+  }
+
   const montlyInterest = anualInterest/100/12;
 
   let originalMonthlyPayment = RoundToTwoDecimalPlaces(calculateRepaymentValue(debt, montlyInterest, numberOfPayments));

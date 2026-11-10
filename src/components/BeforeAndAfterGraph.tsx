@@ -27,6 +27,12 @@ function BeforeAndAfterGraph (
       }
     }
 
+    if (beforeInstallments.installments.length > 0) {
+      categories.push(beforeInstallments.installments.length);
+      beforeSeries.push(0);
+      afterSeries.push(0);
+    }
+
     return  <div className='sticky graph'>
       <div className='roundedBox'>
               <ReactApexChart options={{
